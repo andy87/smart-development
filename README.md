@@ -83,16 +83,16 @@ class CustomerService extends app\components\base\BaseService
   }
 
   /**
-    * @return CustomerRow[]
-    */
+   * @return CustomerRow[]
+   */
   public function getCustomerList( SearchCustomerForm $searchCustomerForm ): array
   {
-      $resp = [];
+    $resp = [];
 
-      $customerListByPeriod = $this->api->getCustomerListByPeriod($searchCustomerForm->from, $searchCustomerForm->to);
+    $customerListByPeriod = $this->api->getCustomerListByPeriod($searchCustomerForm->from, $searchCustomerForm->to);
 
-      foreach( $customerListByPeriod as $customer )
-      {
+    foreach( $customerListByPeriod as $customer )
+    {
       $fio = "{$customer['last_name']} {$customer['name']}";
 
       $birthday = new DateTime($customer['birthday']);
