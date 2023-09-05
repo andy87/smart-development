@@ -132,7 +132,7 @@ class OutSideServiceApi
   {
     // ...
 
-    reeturn $this->query( ... );
+    return $this->query( ... );
   }
 
   // ...
