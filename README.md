@@ -18,7 +18,10 @@ _____
 
 namespace app\controllers;
 
-class CustomerController extrends Controller {
+/**
+  * Контроллер обрабатывающий запросы связанные с клиентами
+  */
+class CustomerController extrends app\components\base\BaseController {
 
   private CustomerService $service;
 
@@ -61,42 +64,46 @@ class CustomerController extrends Controller {
 ```php
 namespace app\services;
 
-class CustomerService extends BaseService
+/**
+  * Сервис для работы с клиентами
+  */
+class CustomerService extends app\components\base\BaseService
 {
-    private OutSideServiceApi $api;
+  /** @var OutSideServiceApi $api */
+  private OutSideServiceApi $api;
 
 
 
   /**
     * @return void
     */
-    public function __construct(OutSideServiceApi $api): void
-    {
-      $this->api = $api;
-    }
+  public function __construct(OutSideServiceApi $api): void
+  {
+    $this->api = $api;
+  }
 
   /**
     * @return CustomerRow[]
     */
-    public function getCustomerList( SearchCustomerForm $searchCustomerForm ): array
-    {
-        $resp = [];
+  public function getCustomerList( SearchCustomerForm $searchCustomerForm ): array
+  {
+      $resp = [];
 
-        $customerListByPeriod = $this->api->getCustomerListByPeriod($searchCustomerForm->from, $searchCustomerForm->to);
+      $customerListByPeriod = $this->api->getCustomerListByPeriod($searchCustomerForm->from, $searchCustomerForm->to);
 
-        foreach( $customerListByPeriod as $customer )
-        {
-          $fio = "{$customer['last_name']} {$customer['name']}";
+      foreach( $customerListByPeriod as $customer )
+      {
+      $fio = "{$customer['last_name']} {$customer['name']}";
 
-          $birthday = new DateTime($customer['birthday']);
-          $interval = $birthday->diff(new DateTime);
-          $age = $interval->y;
+      $birthday = new DateTime($customer['birthday']);
+      $interval = $birthday->diff(new DateTime);
+      $age = $interval->y;
 
-          $resp[] = new CustomerRow( $fio, $age )
-        }
-
-        return $resp;
+      $resp[] = new CustomerRow( $fio, $age )
     }
+
+    return $resp;
+  }
 }
 ```
 
@@ -106,15 +113,26 @@ class CustomerService extends BaseService
 
 namespace app\components\api;
 
+/**
+  * API взаимодействия со сторонним сервисом
+  */
 class OutSideServiceApi
 {
+  /** @var string Токен авторизации и т.п. **/
   private string $token;
 
-   // ....
 
-  public function getCustomerListByPeriod(string $from, string $to, array $filtrer)
+
+  // ....
+
+  /**
+    * @return array
+    */
+  public function getCustomerListByPeriod(string $from, string $to, array $filtrer): array
   {
     // ...
+
+    reeturn $this->query( ... );
   }
 
   // ...
@@ -128,16 +146,17 @@ class OutSideServiceApi
 
 namespace app\resources\customer;
 
-class CustomerViewResources extenda BaseResources
+class CustomerViewResources extenda app\components\base\BaseResources
 {
-    public const TEMPLATE = 'customer-view';
+  /** @var string мя шаблона */
+  public const TEMPLATE = 'customer-view';
 
 
+  /** @var SearchCustomerForm $searchCustomerForm */
+  public SearchCustomerForm $searchCustomerForm;
 
-    public SearchCustomerForm $searchCustomerForm;
-
-    /** @var CustomerRow[] */
-    public array $customerRowList;
+  /** @var CustomerRow[] */
+  public array $customerRowList;
 }
 ```
 
@@ -148,13 +167,26 @@ _Либо используется в шаблоне либо для вычис�
 
 namespace app\models\component\customer;
 
+/**
+  * Модель/DTO
+  */
 class CustomerRow {
+
+  /** @var string $fio*/
   public string $fio;
+
+  /** @var int $fio*/
   public int $age;
 
-  public function __construct($fio, $age)
+
+
+  /**
+    * @return void
+    */
+  public function __construct(string $fio, int $age): void
   {
     $this->fio = $fio;
+
     $this->age = $age;
   }
 }
@@ -175,7 +207,7 @@ class CustomerRow {
  <?= $form->field($R->searchCustomerForm,'from')-> ... ?>
  // ...
 
-<?php if (count($R->customerList)) : ?>
+<?php if (count($R->customerRowList)) : ?>
   <UL>
     <?php foreach($R->customerRowList as $customer ) : ?>
       <LI><?= $customer->fio ?>(<?= $customer->age ?>)<LI>
