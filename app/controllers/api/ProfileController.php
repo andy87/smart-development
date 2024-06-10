@@ -4,7 +4,7 @@ namespace controllers\api;
 
 use components\core\BaseController;
 use resources\profile\ProfileMeResources;
-use services\items\UserService;
+use services\models\UserService;
 
 /**
  * Class ProfileController
@@ -26,6 +26,6 @@ class ProfileController extends BaseController
         $R->userProfile = $userService->getUserProfile();
         $R->friendProfileList = $userService->getFriendProfileList($R->userProfile->id);
 
-        return $R->release();
+        return (array) $R;
     }
 }

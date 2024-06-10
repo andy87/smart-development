@@ -2,10 +2,14 @@
 
 namespace models\dto\profile;
 
+/**
+ * Class FriendProfile
+ *
+ * @package models\dto\profile
+ */
 class FriendProfile
 {
     public const TEMPLATE = 'profile/include/friend';
-
 
 
     public int $id;

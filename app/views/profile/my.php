@@ -39,7 +39,7 @@ use resources\profile\ProfileMeResources;
         <h2 class="b_profile--header">Friends</h2>
 
         <div class="b_profile--friends">
-            <?php foreach ( $R->friendProfileList as $friendProfile ): ?>
+            <?php foreach ($R->friendProfileList as $friendProfile): ?>
                 <?= $this->render(FriendProfile::TEMPLATE, ['friendProfile' => $friendProfile]) ?>
             <?php endforeach; ?>
         </div>

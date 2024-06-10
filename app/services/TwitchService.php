@@ -2,9 +2,9 @@
 
 namespace services;
 
-use services\items\UserService;
+use services\models\UserService;
 use components\api\twitch\TwitchApi;
-use components\core\{ BaseService, BaseApiResponse };
+use components\core\{BaseService, BaseApiResponse};
 use components\api\twitch\response\TwitchDataResponse;
 
 /**

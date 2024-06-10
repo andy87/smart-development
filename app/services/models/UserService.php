@@ -1,17 +1,13 @@
 <?php
 
-namespace services\items;
+namespace services\models;
 
+use models\sources\User;
 use components\core\{BaseModel, BaseService};
-use models\dto\Counters;
-use models\dto\counters\Counter;
-use models\dto\profile\FriendProfile;
-use models\dto\profile\UserProfile;
-use models\User;
-use repository\FriendRepository;
-use repository\UserRepository;
-use services\TwitchService;
-use services\YouTubeService;
+use models\dto\{ Counters, counters\Counter };
+use services\{ YouTubeService, TwitchService };
+use repository\{ UserRepository, FriendRepository };
+use models\dto\profile\{ UserProfile, FriendProfile };
 
 /**
  * Class UserService
@@ -38,7 +34,7 @@ class UserService extends BaseService
     {
         if (!$user_id) $user_id = $this->getCurrentUserId();
 
-        $user = $this->findItemByCriteria(['id' => $user_id]);
+        $user = $this->findItemByCriteria([User::ATTR_ID => $user_id]);
 
         return ($user) ? $this->constructUserProfile($user) : null;
     }
@@ -48,6 +44,7 @@ class UserService extends BaseService
      */
     public function getCurrentUserId(): int
     {
+        // код получения ID текущего пользователя
         return 1;
     }
 
@@ -56,7 +53,7 @@ class UserService extends BaseService
      *
      * @return ?User
      */
-    private function findItemByCriteria(array $criteria): ?User
+    public function findItemByCriteria(array $criteria): ?User
     {
         return $this->userRepository->findItemByCriteria($criteria);
     }
@@ -72,7 +69,7 @@ class UserService extends BaseService
 
         $userProfile->id = $user->id;
         $userProfile->nickname = $user->nickname;
-        $userProfile->avatar = $_ENV['path_upload_avatar'] . $user->avatar;
+        $userProfile->avatar = $user->getAvatarSrc();
 
         $counters = $this->constructCounters($user);
 
@@ -88,7 +85,7 @@ class UserService extends BaseService
      *
      * @return Counters
      */
-    private function constructCounters( User $user): Counters
+    public function constructCounters(User $user): Counters
     {
         $counters = new Counters();
 
@@ -110,15 +107,19 @@ class UserService extends BaseService
      *
      * @return Counter
      */
-    private function getTwitchCounters( User $user ): Counter
-    {
-        $twitchData = TwitchService::getInstance()->getDataByUserID($user->id);
 
+    public function getTwitchCounters(User $user): Counter
+    {
         $twitchCounter = new Counter();
 
-        $twitchCounter->followers = $twitchData['followers'];
-        $twitchCounter->views = $twitchData['views'];
-        $twitchCounter->subscribers = $twitchData['subscribers'];
+        if ($user->twitch_id)
+        {
+            $twitchData = TwitchService::getInstance()->getDataByUserID($user->twitch_id);
+
+            $twitchCounter->followers = $twitchData->followers;
+            $twitchCounter->views = $twitchData->views;
+            $twitchCounter->subscribers = $twitchData->subscribers;
+        }
 
         return $twitchCounter;
     }
@@ -130,13 +131,16 @@ class UserService extends BaseService
      */
     public function getYoutubeCounters(User $user): Counter
     {
-        $youtubeData = YouTubeService::getInstance()->getDataByUserID($user->id);
-
         $youtubeCounter = new Counter();
 
-        $youtubeCounter->followers = $youtubeData['followers'];
-        $youtubeCounter->views = $youtubeData['views'];
-        $youtubeCounter->subscribers = $youtubeData['subscribers'];
+        if ($user->youtube_id)
+        {
+            $youtubeData = YouTubeService::getInstance()->getDataByUserID($user->youtube_id);
+
+            $youtubeCounter->followers = $youtubeData->followers;
+            $youtubeCounter->views = $youtubeData->views;
+            $youtubeCounter->subscribers = $youtubeData->subscribers;
+        }
 
         return $youtubeCounter;
     }
@@ -146,7 +150,7 @@ class UserService extends BaseService
      *
      * @return FriendProfile[]
      */
-    public function getFriendProfileList( ?int $user_id = null): array
+    public function getFriendProfileList(?int $user_id = null): array
     {
         if (!$user_id) $user_id = $this->getCurrentUserId();
 
@@ -154,9 +158,8 @@ class UserService extends BaseService
 
         $friends = $this->friendRepository->findFriendsIdsByUserId($user_id);
 
-        foreach ($friends as $friend)
-        {
-            $userProfile = $this->getUserProfile($friend['friend_id']);
+        foreach ($friends as $friend) {
+            $userProfile = $this->getUserProfile($friend->friend_id);
 
             $friendsProfile = new FriendProfile();
 

@@ -2,6 +2,11 @@
 
 namespace models\dto\profile;
 
+/**
+ * Class UserProfile
+ *
+ * @package models\dto\profile
+ */
 class UserProfile
 {
     public int $id;

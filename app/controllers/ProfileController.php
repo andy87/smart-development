@@ -4,7 +4,7 @@ namespace controllers;
 
 use components\core\BaseController;
 use resources\profile\ProfileMeResources;
-use services\items\UserService;
+use services\models\UserService;
 
 /**
  * Class ProfileController

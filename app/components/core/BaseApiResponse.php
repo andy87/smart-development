@@ -2,6 +2,11 @@
 
 namespace components\core;
 
+/**
+ * Class BaseApiResponse
+ *
+ * @package components\core
+ */
 abstract class BaseApiResponse
 {
     /**

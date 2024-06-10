@@ -2,11 +2,20 @@
 
 namespace repository;
 
+use models\sources\Friend;
 use components\core\BaseRepository;
 
+/**
+ * Class FriendRepository
+ *
+ * @package repository
+ */
 class FriendRepository extends BaseRepository
 {
-    private function getClass()
+    /**
+     * @return Friend|string
+     */
+    private function getClass(): Friend|string
     {
         return Friend::class;
     }
@@ -22,13 +31,13 @@ class FriendRepository extends BaseRepository
     /**
      * @param int $userId
      *
-     * @return array
+     * @return Friend[]
      */
     public function findFriendsIdsByUserId(int $userId): array
     {
         $query = $this->find()
-            ->select('friend_id')
-            ->where(['user_id' => $userId]);
+            ->select(Friend::ATTR_FRIEND_ID)
+            ->where([Friend::ATTR_USER_ID => $userId]);
 
         /** @var ?array $friends */
         $friends = $query->all();

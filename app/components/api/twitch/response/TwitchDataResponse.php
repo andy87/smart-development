@@ -4,6 +4,11 @@ namespace components\api\twitch\response;
 
 use components\core\BaseApiResponse;
 
+/**
+ * Class TwitchDataResponse
+ *
+ * @package components\api\twitch\response
+ */
 class TwitchDataResponse extends BaseApiResponse
 {
     public int $followers;

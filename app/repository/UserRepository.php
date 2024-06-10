@@ -3,7 +3,7 @@
 namespace repository;
 
 use components\core\repository\BaseYiiRepository;
-use models\User;
+use models\sources\User;
 
 /**
  *  Class UserRepository
